@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>纯vue_todo</title>
+	<link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>		
+	</head>
+	<body>
+		<div class="container">
+			<div class="form-group">
+				<label for="">题目</label>
+				<input type="text" v-model="add_info.timu_name" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="">选项<input type="button" @click="add_option()" value="+++" class="btn btn-primary"/></label>
+
+				<div v-for="n in option_num">
+					<input  v-model="add_info.option[n-1]" type="text" class="form-control">
+					<label  v-for="(car_info,ind) in caree_list"> <input type="checkbox"   v-model="add_info.caree_option[n-1][ind]"> {{car_info}} </label> 
+				</div>	
+				
+			</div>
+			<div class="form-group">
+				<input type="button" @click="save()" value="保存" class="btn btn-primary"/>
+			</div>
+		
+		
+		<table class="table table-hover">
+			<tr>
+				
+				<th><span><input v-model="all_check_status" type="checkbox" @click="check_all()" />全选/反选</span>
+					<a class="btn btn-danger" @click="del_check">删除</a></th>
+				<th>id</th>
+				<th>题目</th>
+				<th>选项</th>
+				<th>操作</th>
+			</tr>
+			<tr v-for="(info,index) in timu_list">
+				<td><input type="checkbox" :value="info" v-model="check_list" /></td>
+				<td>{{index+1}}</td>
+				<td @dblclick="info.is_show=1">
+					<span v-show="!info.is_show">{{info.timu_name}}</span>
+					<input type="text" @keydown.enter="update(info,index)" @blur="update(info,index)" v-show="info.is_show" id="" v-model="info.timu_name" />
+				</td>
+				<td>
+					<div v-for="(xx,xx_index) in info.option">
+						{{xx}}的职业是:
+						<span v-for="(car_info,car_code) in info.caree_option[xx_index]">
+							
+							{{caree_list[car_code]}}
+						</span>
+						
+
+					</div>
+				</td>
+				<td><a class="btn btn-danger" @click="del(index)" >删除</a></td>
+				
+			</tr>
+			
+		</table>
+		</div>
+		
+		
+		
+		
+		<script type="text/javascript">
+			new Vue({
+				el:'.container',
+				data:{
+					all_check_status:false,
+					option_num:1,
+					add_info:{
+						timu_name:"",
+						option:[],
+						caree_option:[{}]
+					},
+					timu_list:[],
+					caree_list:['医生','老师','警察','科学家','霸道总裁','设计师','明星','IT大佬','大厨','外交官'],
+					check_list:[]
+				},
+				created(){
+					this.init()
+				},
+				add_option:function(){
+					this.add_info.caree_option.push({})	
+					this.option_num++
+				},
+				methods:{
+					init:function(){
+						var json_data=localStorage.getItem('timu_data')
+						if(json_data){
+							this.timu_list = JSON.parse(json_data)
+						}
+					},
+					add_option:function () {
+					this.add_info.caree_option.push({})	
+					this.option_num++
+					},
+					save:function(){
+						//alert(this.add_info.timu_name)
+						//console.log(this.add_info.option)
+						this.timu_list.push({
+							timu_name:this.add_info.timu_name,
+							is_show:0,
+							option:this.add_info.option,
+							caree_option:this.add_info.caree_option
+							
+						})
+						this.update_storage()
+						this.add_info={
+						
+						timu_name:"",
+						option:[],
+						caree_option:[{}]
+				
+						}
+						
+					},
+					update:function(info,index){
+						info.is_show=0
+						this.timu_list[index]=info
+						this.update_storage()
+						
+					},
+					
+					update_storage:function(){
+						localStorage.setItem('timu_data',JSON.stringify(this.timu_list))
+						/*上传到localStorage*/
+					},
+					
+					del:function(index){
+						this.timu_list.splice(index,1)
+						this.update_storage()
+					},
+					del_check:function(){
+						this.check_list.forEach((item)=>{
+							this.del(this.timu_list.indexOf(item))
+						})
+						this.check_list=[]
+					},
+					check_all:function(){
+						if(!this.all_check_status){
+							this.timu_list.forEach((info)=>{
+							this.check_list.push(info)
+						})
+						}else{
+							this.check_list = []
+						}
+						
+					}
+				}
+				
+			})
+		</script>
+	</body>
+</html>

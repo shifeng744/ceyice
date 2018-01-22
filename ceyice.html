@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script src="js/vue.js"></script>	
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="css/element-ui.css">
+		<!-- 引入组件库 -->
+		<script src="js/element-ui.js"></script>	
+		<script type="text/javascript" src="js/underscore.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/animate.css"/>
+		<title>测一测游戏</title>
+		<style type="text/css">
+			*{padding: 0; margin: 0; font: "微软雅黑";font-size: 16px; color: white;}
+			.bg>img.beijing{
+				width: 100%;
+				
+			}
+			.bg img.nailao{
+				width: 100%;
+				position: absolute;
+				left: 0;
+				bottom: 0;
+			}
+			.bg>img>.cyc,.dfj,.xfj,.cr,.lx,.cyc{
+				position: absolute;
+				
+			}
+			.bg>img.cyc{
+				top: 4px;
+			    left: 45px;
+			    width: 280px;
+			}
+			.bg>img.lx{
+				top: 251px;
+			    left: 0;
+			    width: 200px;
+			    animation-delay:0.3s;
+			}
+			.bg>img.cr{
+				top: 288px;
+			    left: 103px;
+			    width: 200px;
+			}
+			.bg>img.dfj{
+				top: 41px;
+			    left: 21px;
+			    width: 100px;
+			}
+			.bg>img.xfj{
+			    bottom: 113px;
+			    right: 36px;
+			    width: 50px;
+			    animation-delay:0s;
+			}
+			li{
+				list-style: none;
+			}
+			.bg{
+				position: absolute;top: 0;left: 0;
+				}
+			.content{    position: relative;
+			    z-index: 666;
+			    color: #fff;
+			    margin: 50% auto 0;
+			    width: 68%;
+			    height: 230px;
+			    padding: 10px;background-color:#f40b5f ; 
+				border-radius: 10px;
+			    
+			    }
+			.container .timu_box h2{
+				text-align: center;
+			}
+			.container .timu_box ul li{
+				text-align: center;
+				margin-right: 50px;
+				margin-top: 10px;
+			}
+			.container .timu_box ul li span{
+				margin-left: 5px;
+				margin-right: 5px;
+				
+			}
+			 .el-button.tj{
+			 	background-color: #ffce06;
+			 	border-radius: 40px;
+			 	box-shadow: 0px 3px 0px 0px #e99911;
+			 	margin-top: 20px;
+			 	position: absolute;
+			 	bottom: 20px;
+			 	left: 34%;
+			 }
+			 .el-button.tjdaan{
+			 	background-color: #ffce06;
+			 	border-radius: 40px;
+			 	box-shadow: 0px 3px 0px 0px #e99911;
+			 	margin-top: 20px;
+			 	position: absolute;
+			 	bottom: 20px;
+			 	left: 24%;
+			 }
+			 .el-button.ksyx img{
+				width: 150px;
+			 	position: absolute;
+			 	top: 76%;
+			 	left: 28%;
+			 	z-index: 9999;
+			 }			 
+			.el-radio__input.is-checked .el-radio__inner {
+			    border-color: white;
+			    background: white;
+			}	
+			.el-radio__inner::after{
+				background-color: #f40b5f;
+				width: 6px;
+				height: 6px;
+			}
+			.jieguo_box{
+				text-align: center;
+			}
+			.jieguo_box #h1,#h2{
+				margin-top: 40px;
+			}		   			
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!--背景-->
+			<div class="bg">
+				<img src="img/1.png" class="beijing" /><!--class="animated bounceOutLeft"-->
+				<img src="img/2.png" class="nailao animated bounceInUp" />
+				<img src="img/3.png" class="cr animated slideInLeft" />
+				<img src="img/4.png" class="lx animated slideInLeft" />
+				<img src="img/5.png" class="dfj animated zoomInLeft" />
+				<img src="img/6.png" class="cyc animated jackInTheBox" />
+				<img src="img/7.png" class="xfj animated zoomInLeft" />
+			</div>
+			<!--内容-->
+			<div class="first_box" v-if="box_num == -2">
+					第一屏幕
+				</div>
+			<div class="content" >
+				
+				<div class="timu_box" v-for="(info,timu_index) in timu_list" v-if="box_num == timu_index">
+					<h2>{{info.timu_name}}</h2>
+					<ul>
+						<li v-for="(xx,xx_index) in info.option">
+							<span >
+							<el-radio v-model="choose_list[timu_index]" :label="xx_index">{{xx}}</el-radio>
+								
+							</span>
+
+							
+						</li>
+					</ul>
+				</div>
+				<div class="jieguo_box wocao" v-if="box_num == 666" >
+					<h2 id="h2">未来可能的职业是：</h2>
+					<h1 id="h1">{{daan}}</h1>
+				</div>
+
+				<el-button @click="box_num++" type="warning" class="tj" v-if="box_num<timu_list.length-1&box_num!=-1">提交</el-button>
+				<el-button @click="tellme()" type="warning" class="tjdaan" v-if="box_num==timu_list.length-1">点击获取答案</el-button>
+			</div>
+				<el-button @click="kaishi()" type="warning" class="ksyx" v-if="box_num<0"><img src="img/8.png" class="animated bounceInUp"/></el-button>
+			
+		</div>
+		
+		
+		
+		
+		<script type="text/javascript">
+			new Vue({
+				el:'.container',
+				data:{
+					box_num:-1,
+					timu_list:[],
+					choose_list:[],
+					caree_list:['医生','老师','警察','科学家','霸道总裁','设计师','明星','IT大佬','大厨','外交官'],
+					daan:[],
+					
+					//radio:1
+				},
+				created(){
+				this.init()
+				},
+				methods:{
+					init:function () {
+						var timu_json = localStorage.getItem('timu_data')
+						if (timu_json) {
+							this.timu_list = JSON.parse(timu_json)
+						}
+						if(this.box_num<0){
+							var c_n=document.getElementsByClassName("content")[0];
+							c_n.style.display="none"
+						}
+						else if(this.box_num>=0){
+							var c_n=document.getElementsByClassName("content")[0];
+							c_n.style.display="block"
+						}
+						
+					},
+					kaishi:function(){
+						this.box_num++
+						if(this.box_num>=0){
+							var c_n=document.getElementsByClassName("content")[0];
+							c_n.style.display="block"
+						}
+					},
+					tellme:function () {
+					var daan_list = []
+					this.choose_list.forEach((item,timu_index)=>{
+						if (timu_index > 0 ) {
+							daan_list.push(_.keys(this.timu_list[timu_index].caree_option[item]))
+						}
+						
+					})
+					var jiaoji = _.intersection(...daan_list)
+					if (jiaoji.length<=0) {
+						// 没交集则统计职业数量最多的
+						var yw_ar = _.flatten(daan_list)
+						var group_ar = _.groupBy(yw_ar)
+						var sort_ar = _.sortBy(group_ar,function (item) {
+							return item.length
+						})
+						//console.log(sort_ar[sort_ar.length-1][0])
+						this.daan=this.caree_list[sort_ar[sort_ar.length-1][0]]
+					}else{
+						this.daan=this.caree_list[jiaoji]
+					}
+					this.box_num =666
+				}
+				} 
+			})
+		</script>
+	</body>
+</html>
